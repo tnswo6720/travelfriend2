@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import axios from "axios";
 
-// ... (스타일링 코드 생략) ...
-
 const Page = styled.div`
   background-color: #7b3fb63d;
   min-height: 100vh;
@@ -44,7 +42,13 @@ const Input = styled.input`
 `;
 
 export default function App(): JSX.Element {
-  const [userInfo, setUserInfo] = useState(null);
+  const [user, setUser] = useState({
+    id: "",
+    password: "",
+    // 필요한 다른 필드들도 추가...
+  });
+
+  // ... (다른 코드 생략)
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -57,8 +61,8 @@ export default function App(): JSX.Element {
             },
           }
         );
-        console.log("Fetched user info:", response.data);
-        setUserInfo(response.data);
+        console.log("Fetched user info:", response.data); // 응답 데이터를 콘솔에 출력
+        setUser(response.data);
       } catch (error) {
         console.error("Failed to fetch user info:", error);
       }
@@ -67,18 +71,21 @@ export default function App(): JSX.Element {
     void fetchUserInfo();
   }, []);
 
+  // ... (다른 코드 생략)
+
+  const [id, setId] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [page, setPage] = useState<string>("profile");
 
-  const handleInputChange = (field: string, value: string) => {
-    setUserInfo({
-      ...userInfo,
-      [field]: value,
-    });
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setId(event.target.value);
   };
 
-  if (!userInfo) {
-    return <div>Loading...</div>;
-  }
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
 
   return (
     <Page>
@@ -89,11 +96,16 @@ export default function App(): JSX.Element {
           {/* ID */}
           <Section>
             <h2>닉네임</h2>
-            <Input
-              type="text"
-              value={userInfo.userid || ""}
-              onChange={(e) => handleInputChange("userid", e.target.value)}
-            />
+            <Input type="text" value={id} onChange={handleIdChange} />
+            {
+              <Button
+                onClick={() => {
+                  console.log(`Updated id to ${id}`);
+                }}
+              >
+                update
+              </Button>
+            }
           </Section>
 
           {/* Password */}
@@ -101,41 +113,32 @@ export default function App(): JSX.Element {
             <h2>비밀번호</h2>
             <Input
               type="password"
-              value={userInfo.password || ""}
-              onChange={(e) => handleInputChange("password", e.target.value)}
+              value={password}
+              onChange={handlePasswordChange}
             />
+            {
+              <Button
+                onClick={() => {
+                  console.log(`Updated password to ${password}`);
+                }}
+              >
+                update
+              </Button>
+            }
           </Section>
 
           {/* Email */}
           <Section>
             <h2>Email</h2>
-            <Input
-              type="text"
-              value={userInfo.userEmail || ""}
-              onChange={(e) => handleInputChange("userEmail", e.target.value)}
-            />
+            <p>
+              juliepark123@gmail.com<Button>update</Button>
+            </p>
           </Section>
 
           {/* Gender */}
           <Section>
             <h2>Gender</h2>
-            <Input
-              type="text"
-              value={userInfo.usergender || ""}
-              onChange={(e) => handleInputChange("usergender", e.target.value)}
-            />
-          </Section>
-
-          {/* Update Button */}
-          <Section>
-            <Button
-              onClick={() => {
-                console.log(`Updated user info to ${JSON.stringify(userInfo)}`);
-                // 서버에 전체 정보 업데이트 요청을 보내는 코드...
-              }}
-            >
-              update
-            </Button>
+            <p>Female</p>
           </Section>
 
           {/* 추가된 버튼으로 페이지 전환 */}

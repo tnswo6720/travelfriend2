@@ -6,6 +6,7 @@ import {
 } from "../../../../commons/types/generated/types";
 
 export interface IPaginations01Props {
+  setCurrentPage: any;
   count?: number;
   refetch: (
     variables: Partial<IQueryFetchBoardsArgs>

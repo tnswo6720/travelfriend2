@@ -2,138 +2,20 @@
 import React, { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import styled from "@emotion/styled";
+import axios from "axios";
+import Recommend from "../../travel/recommend/recommend2";
 
 interface Place {
+  id: number;
   name: string;
-  season: string[];
-  rating: string;
-  cost: "저렴" | "보통" | "비싼";
-  image: string; // 여행지 이미지 URL
-  description: string; // 여행지 설명
+  region: string;
+  bestSeason: string;
+  averageRating: number;
+  features: string[];
+  imageUrl: string; // 여행지 이미지 URL
+  contents: string; // 여행지 설명
+  cost: string; // 여행지 물가
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const placesData: Place[] = [
-  // 10개의 장소 데이터를 추가했습니다.
-  {
-    name: "경복궁",
-    season: ["봄", "여름"],
-    rating: "5",
-    cost: "저렴",
-    image:
-      "https://a.cdn-hotels.com/gdcs/production75/d1444/e66988b1-f783-4e8f-a7ea-8c5eebe88436.jpg?impolicy=fcrop&w=800&h=533&q=medium",
-    description: "경희루가 특히 아름답습니다.",
-  },
-  {
-    name: "한옥마을",
-    season: ["여름"],
-    rating: "4",
-    cost: "보통",
-    image:
-      "https://www.agoda.com/wp-content/uploads/2019/05/Seoul-itinerary-Seoul-Bukchon-Hanok-Village.jpg",
-    description: "고풍스럽네요",
-  },
-  {
-    name: "넥슨 본사",
-    season: ["가을", "겨울"],
-    rating: "3",
-    cost: "비싼",
-    image:
-      "https://www.bizhankook.com/upload/bk/article/201902/thumb/17246-37122-sampleM.jpg",
-    description: "강원기 디렉터 봤어요",
-  },
-  // 아래는 예시용 데이터입니다. 실제로는 각 장소에 맞는 데이터를 넣어주세요.
-  {
-    name: "장소4",
-    season: ["봄"],
-    rating: "5",
-    cost: "보통",
-    image: "https://via.placeholder.com/150",
-    description: "장소4설명",
-  },
-  {
-    name: "장소5",
-    season: ["여름"],
-    rating: "4",
-    cost: "비싼",
-    image: "장소5이미지URL",
-    description: "장소5설명",
-  },
-  {
-    name: "장소6",
-    season: ["가을"],
-    rating: "3",
-    cost: "저렴",
-    image: "장소6이미지URL",
-    description: "장소6설명",
-  },
-  {
-    name: "장소7",
-    season: ["겨울"],
-    rating: "2",
-    cost: "보통",
-    image: "장소7이미지URL",
-    description: "장소7설명",
-  },
-  {
-    name: "장소8",
-    season: ["봄", "여름"],
-    rating: "1",
-    cost: "비싼",
-    image: "장소8이미지URL",
-    description: "장소8설명",
-  },
-  {
-    name: "장소9",
-    season: ["가을", "겨울"],
-    rating: "5",
-    cost: "저렴",
-    image: "장소9이미지URL",
-    description: "장소9설명",
-  },
-  {
-    name: "장소10",
-    season: ["봄", "여름", "가을", "겨울"],
-    rating: "4",
-    cost: "보통",
-    image: "장소10이미지URL",
-    description: "장소10설명",
-  },
-
-  {
-    name: "장소11",
-    season: ["여름"],
-    rating: "3",
-    cost: "보통",
-    image: "장소11이미지URL",
-    description: "장소11설명",
-  },
-  {
-    name: "장소12",
-    season: ["봄", "여름", "가을"],
-    rating: "1",
-    cost: "비싼",
-    image: "장소8이미지URL",
-    description: "장소8설명",
-  },
-  {
-    name: "장소13",
-    season: ["가을", "겨울"],
-    rating: "5",
-    cost: "저렴",
-    image: "장소13이미지URL",
-    description: "장소9설명",
-  },
-  {
-    name: "장소14",
-    season: ["봄", "여름", "가을", "겨울"],
-    rating: "4",
-    cost: "보통",
-    image: "장소14이미지URL",
-    description: "장소10설명",
-  },
-];
-
 // Styled components
 const Container = styled.div`
   font-family: Arial, sans-serif;
@@ -141,8 +23,7 @@ const Container = styled.div`
   justify-content: center;
   padding: 0px;
   background-color: #e6e6fa; // 연한 보라색 배경 적용
-  height: 150vh; // 페이지 전체 높이를 늘립니다.
-  width: 220vh;
+  height: 101vh; // 페이지 전체 높이를 늘립니다.
 `;
 
 const commonLabelStyle = `
@@ -171,7 +52,7 @@ const FilterSection = styled.div`
   overflow-y: auto;
   color: #4b0082; // 체크박스와 텍스트에 보다 진한 보라색 적용
   font-size: 20px; // 텍스트 크기를 16px로 설정
-  width: 104%;
+  width: 100%;
 
   label {
     ${commonLabelStyle}
@@ -189,19 +70,17 @@ const ContentSection = styled.div`
   flex: 2;
   display: flex;
   flex-direction: column; // 세로 방향으로 정렬
-  width: 80%;
+  width: 85%;
   height: fit-content; // 높이를 콘텐츠에 맞게 조절
 `;
 const ContentTop = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex: 1;
-  padding: 0px;
-  border-bottom: 1px solid #ccc;
-  height: 10px;
+  flex: 1 0 calc(33% - 20px); // 아이템들이 화면에 꽉 차게 보이도록 flex-basis 조정
+  padding: 30px;
+  // width: 90vw;
 `;
-
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between; // 버튼 사이에 공간 배치
@@ -227,13 +106,48 @@ const ButtonContainer = styled.div`
 `;
 const ContentBottom = styled.div`
   display: flex;
-  flex: 2;
-  // flex-wrap: nowrap; // 컨텐츠가 넘칠 경우 다음 줄로 넘기지 않습니다.
-  flex-wrap: wrap; // 컨텐츠가 넘칠 경우 다음 줄로 넘깁니다.
+  flex-wrap: no-wrap;
   padding: 20px;
-  // overflow-x: auto; // 오른쪽으로 스크롤하는 문제 해결
-  overflow-x: hidden; // 오른쪽으로 스크롤이 되지 않도록 설정
-  max-width: 100%; // 컨텐츠의 너비를 제한
+  overflow-x: hidden;
+  max-width: 100%;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-contents: center;
+    align-items: center;
+    flex: 1 0 calc(25%); /* div의 가로 길이 줄이기 */
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    width: 300px;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  img {
+    width: 350px;
+    height: 140px;
+    border-radius: 10px;
+    object-fit: contain;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+
+  p {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
 `;
 
 const PlaceCard = styled.div`
@@ -251,44 +165,71 @@ const PlaceCard = styled.div`
   }
 `;
 
-const PlaceImage = styled.img`
-  width: 140px; /* 이미지 너비 설정 */
-  height: 140px; /* 이미지 높이 설정 */
-  border-radius: 10px;
-  object-fit: cover; /* 이미지 비율 유지 */
-`;
+type Destination = {
+  id: number;
+  features: string;
+  description: string;
+  imageUrl: string;
+  name: string;
+  averageRating: number;
+};
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-// async function fetchData() {
-//   const response = await fetch("API_URL", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({
-//       // 여기에 필요한 데이터를 넣어줍니다.
-//     }),
-//   });
+const handleRadioChange =
+  (setSelectedFunc: (value: number) => void) =>
+  (event: ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value);
+    setSelectedFunc(value);
+  };
 
-//   if (!response.ok) {
-//     throw new Error(`HTTP error! status: ${response.status}`);
-//   }
-
-//   const data = await response.json();
-//   return data;
-// }
 export default function TravelFilter(): JSX.Element {
-  // const [placesData, setPlacesData] = useState<Place[]>([]);
+  const [placesData, setPlacesData] = useState<Place[]>([]);
+  const [userInfo, setUserInfo] = useState<any>(null); // 사용자 정보를 저장할 상태
 
-  // useEffect(() => {
-  //   fetchData()
-  //     .then((data) => {
-  //       setPlacesData(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // }, []);
+  useEffect(() => {
+    // 백엔드 API에서 여행지 목록을 가져옵니다.
+    axios
+      .get("/api/destinations")
+      .then((response) => {
+        const overseasPlaces = response.data.filter(
+          (place) => place.region === "충청도"
+        );
+        const dataWithCost = overseasPlaces.map((place) => ({
+          ...place,
+          cost: ["저렴", "보통", "비싼"][Math.floor(Math.random() * 3)], // 랜덤하게 물가를 지정
+        }));
+        setPlacesData(dataWithCost);
+      })
+      .catch((error) => {
+        console.error("여행지 목록을 가져오는 중 오류 발생:", error);
+      });
+
+    // JWT 토큰이 존재할 때만 사용자 정보를 가져오도록 함
+    const authToken = localStorage.getItem("authToken");
+    if (authToken) {
+      fetchUserInfo(); // 회원 정보를 가져오는 함수 호출
+    }
+  }, []);
+
+  // 사용자 정보를 가져오는 함수
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/users/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`, // JWT 토큰을 헤더에 추가
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("회원 정보:", response.data);
+        setUserInfo(response.data); // 사용자 정보를 상태에 저장
+      }
+    } catch (error) {
+      console.error("회원 정보 가져오기 실패:", error);
+    }
+  };
 
   const [selectedSeasons, setSelectedSeasons] = useState<string[]>([]);
   const [selectedRatings, setSelectedRatings] = useState<number>(0);
@@ -298,24 +239,51 @@ export default function TravelFilter(): JSX.Element {
   const itemsPerPage = 3;
 
   const handleCheckboxChange =
-    <T extends number | string[]>(
-      setSelectedFunc: React.Dispatch<React.SetStateAction<T>>
-    ) =>
+    (setSelectedFunc: (value: string[]) => void) =>
     (event: ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.checked
-        ? (Number(event.target.value) as T)
-        : (0 as T);
-      setSelectedFunc(value);
+      const value = event.target.value;
+      const isChecked = event.target.checked;
+
+      setSelectedFunc((prevState) => {
+        if (isChecked) {
+          // 체크된 경우 배열에 값을 추가
+          return [...prevState, value];
+        } else {
+          // 체크 해제된 경우 배열에서 값을 제거
+          return prevState.filter((item) => item !== value);
+        }
+      });
     };
 
   const filteredPlaces = placesData.filter(
     (place) =>
       (selectedSeasons.length === 0 ||
-        selectedSeasons.some((season) => place.season.includes(season))) &&
-      (selectedRatings === 0 || Number(place.rating) >= selectedRatings) &&
+        selectedSeasons.some((season) => place.bestSeason.includes(season))) &&
+      (selectedRatings === 0 || place.averageRating >= selectedRatings) &&
       (selectedCosts.length === 0 || selectedCosts.includes(place.cost))
   );
 
+  const removeImgTagsFromHTMLContents = (htmlContents: string) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContents, "text/html");
+
+    // Remove <img> tags
+    doc
+      .querySelectorAll("img")
+      .forEach((img) => img.parentNode?.removeChild(img));
+
+    // Remove all <p> tags and replace with its textContent
+    doc.querySelectorAll("p").forEach((p) => {
+      if (p.textContent.trim()) {
+        const textNode = document.createTextNode(p.textContent.trim());
+        p.parentNode?.replaceChild(textNode, p);
+      } else {
+        p.parentNode?.removeChild(p);
+      }
+    });
+
+    return doc.body.textContent || "";
+  };
   const endIndex = currentPage * itemsPerPage;
   const startIndex = endIndex - itemsPerPage;
   const currentPlaces = filteredPlaces.slice(startIndex, endIndex);
@@ -346,7 +314,7 @@ export default function TravelFilter(): JSX.Element {
                 type="radio"
                 name="rating"
                 value={r.toString()}
-                onChange={handleCheckboxChange(setSelectedRatings)}
+                onChange={handleRadioChange(setSelectedRatings)}
               />
               {"⭐".repeat(r)}
             </Label>
@@ -392,25 +360,26 @@ export default function TravelFilter(): JSX.Element {
           </ButtonContainer>
         </ContentTop>
         <ContentBottom>
-          {/* Render current places instead of all filtered places */}
           {currentPlaces.map((place) => (
-            <PlaceCard key={place.name}>
+            <div key={place.id}>
+              <img src={place.imageUrl} alt={place.name} />
               <h2>{place.name}</h2>
-              <PlaceImage src={place.image} alt={place.name} />
-              <p>{place.description}</p>
-              <p>평점: {"⭐".repeat(Number(place.rating))}</p>
-              <p>추천 계절: {place.season.join(", ")}</p>
-              <p>관광지 물가: {place.cost}</p>
-            </PlaceCard>
+              {/* <p>지역: {place.region}</p> */}
+              <p>최적의 계절: {place.bestSeason}</p>
+              <p>평균 평점: {"⭐".repeat(place.averageRating)}</p>
+              {/* <p>특징: {place.features.join(", ")}</p> */}
+              <p>후기: {removeImgTagsFromHTMLContents(place.contents)}</p>
+              <p>물가: {place.cost}</p>
+            </div>
           ))}
         </ContentBottom>
+        <hr></hr>
 
         {/* 구분  */}
 
-        <ContentTop>{/* 이 공간에 새로운 콘텐츠를 띄우세요 */}</ContentTop>
-        <ContentBottom>
-          {/* Render current places instead of all filtered places */}
-        </ContentBottom>
+        <ContentTop>
+          <Recommend />
+        </ContentTop>
       </ContentSection>
     </Container>
   );

@@ -27,13 +27,13 @@ const WeatherContainer = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-
+  width: 207px;
   height: 80px;
 `;
 
 const CityName = styled.h1`
   color: #4a4a4a;
-  font-size: 18px;
+  font-size: 15px;
 `;
 
 const WeatherDescription = styled.h2`

@@ -1,24 +1,27 @@
 import React from "react";
-import * as S from "./BoardWrite.styles";
+import * as S from "./BoardWrite.styles1";
 import type { IBoardWriteUIProps } from "./BoardWrite.types";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // Quill의 스타일 시트를 추가해줍니다.
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Quill의 스타일 시트를 추가해줍니다.
 // import MyQuillEditor from '../../../CustomEditor/MyQuillEditor';
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 const MyQuillEditor = dynamic(
-  () => import('../../../CustomEditor/MyQuillEditor'),
+  () => import("../../../CustomEditor/MyQuillEditor"),
   { ssr: false }
 );
 export default function BoardWriteUI({
-  formData, errors, handleChange, handleSubmit, handleEditorChange
+  formData,
+  errors,
+  handleChange,
+  handleSubmit,
+  handleEditorChange,
 }: IBoardWriteUIProps): JSX.Element {
-
   return (
     <S.Wrapper>
       <S.Title>게시글 등록</S.Title>
       <form onSubmit={handleSubmit}>
+        <S.Label>작성자</S.Label>
         <S.InputWrapper>
-          <S.Label>작성자</S.Label>
           <S.Writer
             type="text"
             name="author"
@@ -28,8 +31,8 @@ export default function BoardWriteUI({
           />
           <S.Error>{errors.authorError}</S.Error>
         </S.InputWrapper>
+        <S.Label>비밀 번호</S.Label>
         <S.InputWrapper>
-          <S.Label>비밀번호</S.Label>
           <S.Password
             type="password"
             name="password"
@@ -39,8 +42,8 @@ export default function BoardWriteUI({
           />
           <S.Error>{errors.passwordError}</S.Error>
         </S.InputWrapper>
+        <S.Label>제목</S.Label>
         <S.InputWrapper>
-          <S.Label>제목</S.Label>
           <S.Subject
             type="text"
             name="title"
@@ -50,19 +53,24 @@ export default function BoardWriteUI({
           />
           <S.Error>{errors.titleError}</S.Error>
         </S.InputWrapper>
+        <S.Label>내용</S.Label>
         <S.InputWrapper>
-          <S.Label>내용</S.Label>
           {/* <S.Contents
             name="contents"
             placeholder="내용을 작성해주세요."
             value={formData.contents}
             onChange={handleChange}
             /> */}
-          <MyQuillEditor onChange={handleEditorChange} value={formData.contents} />
+          <MyQuillEditor
+            onChange={handleEditorChange}
+            value={formData.contents}
+          />
           <S.Error>{errors.contentsError}</S.Error>
         </S.InputWrapper>
+        <br></br>
+        <br></br>
+        <S.YotubeLabel>유튜브</S.YotubeLabel>
         <S.InputWrapper>
-          <S.Label>유튜브</S.Label>
           <S.Youtube
             type="text"
             name="youtubeUrl"
@@ -71,12 +79,9 @@ export default function BoardWriteUI({
             onChange={handleChange}
           />
         </S.InputWrapper>
-        <S.InputWrapper>
-        </S.InputWrapper>
+        <S.InputWrapper></S.InputWrapper>
         <S.ButtonWrapper>
-          <S.SubmitButton type="submit">
-            등록하기
-          </S.SubmitButton>
+          <S.SubmitButton type="submit">등록하기</S.SubmitButton>
         </S.ButtonWrapper>
       </form>
     </S.Wrapper>

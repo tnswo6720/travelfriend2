@@ -7,18 +7,11 @@ import {
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import LayoutBanner from "../src/components/commons/layout/banner/LayoutBanner.container";
-import MyCarousel from "./MyCarousel/MyCarousel";
 
 const { Content, Sider } = Layout;
 
 const icons = [UserOutlined, LaptopOutlined, NotificationOutlined];
-const boardNames = ["자유 게시판", "여행지 추천", "회원정보"];
-const images = [
-  "./seoul.jpg",
-  "./jeon.jpg",
-  "./jeju.jpg",
-  // ... 필요한 만큼 이미지 URL을 추가
-];
+const boardNames = ["자유 게시판", "여행지 추천", "회원관리"];
 
 const items2 = icons.map((Icon, index) => {
   const key = String(index + 1);
@@ -127,24 +120,23 @@ export default function App() {
               padding: 24,
               margin: 0,
               minHeight: 650,
-              backgroundImage: `url('backback.jpg')`,
+              backgroundImage: `url('backback.jpg')`, // 배경 이미지 경로를 적절히 수정해주세요.
               backgroundSize: "cover",
               backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
+              backgroundRepeat: "no-repeat", // 배경 이미지 반복 제어
               borderRadius: "20px",
             }}
           >
+            {/* <LayoutBanner /> */}
             <div
               style={{
-                position: "relative",
-                top: "37%",
-                left: "50%",
+                position: "absolute",
+                top: "30%",
+                left: "59%",
                 transform: "translate(-50%, -50%)",
                 textAlign: "center",
               }}
-            >
-              <MyCarousel images={images} />
-            </div>
+            ></div>
           </Content>
         </Layout>
       </Layout>

@@ -7,28 +7,26 @@ import {
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import LayoutBanner from "../src/components/commons/layout/banner/LayoutBanner.container";
-import MyCarousel from "./MyCarousel/MyCarousel";
 
 const { Content, Sider } = Layout;
 
-const icons = [UserOutlined, LaptopOutlined, NotificationOutlined];
-const boardNames = ["자유 게시판", "여행지 추천", "회원정보"];
-const images = [
-  "./seoul.jpg",
-  "./jeon.jpg",
-  "./jeju.jpg",
-  // ... 필요한 만큼 이미지 URL을 추가
-];
-
-const items2 = icons.map((Icon, index) => {
+const items2: MenuProps["items"] = [
+  UserOutlined,
+  LaptopOutlined,
+  NotificationOutlined,
+].map((icon, index) => {
   const key = String(index + 1);
+
+  // 게시판 이름 배열
+  const boardNames = ["자유 게시판", "여행지 추천", "주변 놀거리"];
 
   return {
     key: `sub${key}`,
-    icon: <Icon />,
-    label: boardNames[index],
+    icon: React.createElement(icon),
+    label: boardNames[index], // 게시판 이름
+
     children:
-      index === 0
+      index === 0 // 첫 번째 메뉴인 경우
         ? [
             {
               key: "1",
@@ -49,11 +47,11 @@ const items2 = icons.map((Icon, index) => {
                 (window.location.href = "http://example.com/recommended"),
             },
           ]
-        : index === 1
+        : index === 1 // 두 번째 메뉴인 경우 (여행지 관련)
         ? [
             {
               key: "4",
-              label: "여행지 리뷰 수정",
+              label: "여행지 추천",
               onClick: () =>
                 (window.location.href =
                   "http://localhost:3000/travel/recommend/recommend"),
@@ -70,6 +68,7 @@ const items2 = icons.map((Icon, index) => {
               label: "이용자 여행지 추천",
               onClick: () =>
                 (window.location.href = "http://localhost:3000/travel_list"),
+              // 해당 URL로 이동하도록 설정합니다.
             },
           ]
         : new Array(4).fill(null).map((_, j) => {
@@ -82,7 +81,7 @@ const items2 = icons.map((Icon, index) => {
   };
 });
 
-export default function App() {
+const App: React.FC = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -90,64 +89,46 @@ export default function App() {
   return (
     <Layout>
       <Layout>
-        <Sider
-          width={200}
-          style={{
-            background: colorBgContainer,
-            borderRadius: "40px", // 둥근 모서리 설정
-          }}
-        >
+        <Sider width={200} style={{ background: colorBgContainer }}>
           <Menu
             mode="inline"
             defaultSelectedKeys={["1"]}
             defaultOpenKeys={["sub1"]}
-            style={{ height: "100%", borderRight: 0, borderRadius: "10px" }}
+            style={{ height: "100%", borderRight: 0 }}
             items={items2}
           />
         </Sider>
-        <Layout style={{ padding: "0 0px 0px" }}>
-          <Breadcrumb
-            style={{
-              color: "white",
-              fontSize: "20px",
-              fontWeight: "bold",
-              textShadow: "4px 3px 4px #D8BFD8",
-              display: "flex", // 추가된 부분
-              justifyContent: "center", // 추가된 부분
-              padding: "10px",
-              // backgroundColor: "#f5f2fc", // 배경색 설정
-              backgroundColor: "#F5F2F8", // 배경색 설정
-              // borderTop: "1px dashed white", // 위쪽 구분선 설정
-            }}
-          >
-            최근 올라온 사이트 여행 콘텐츠
+        <Layout style={{ padding: "0 24px 24px" }}>
+          <Breadcrumb style={{ margin: "16px 0" }}>
+            <Breadcrumb.Item>Home</Breadcrumb.Item>
+            <Breadcrumb.Item>List</Breadcrumb.Item>
+            <Breadcrumb.Item>App</Breadcrumb.Item>
           </Breadcrumb>
           <Content
             style={{
               padding: 24,
               margin: 0,
-              minHeight: 650,
-              backgroundImage: `url('backback.jpg')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              borderRadius: "20px",
+              minHeight: 1000,
+              background: colorBgContainer,
             }}
           >
+            {/* <LayoutBanner /> */}
             <div
               style={{
-                position: "relative",
-                top: "37%",
-                left: "50%",
+                position: "absolute",
+                top: "30%",
+                left: "59%",
                 transform: "translate(-50%, -50%)",
                 textAlign: "center",
               }}
             >
-              <MyCarousel images={images} />
+              인기 콘텐츠
             </div>
           </Content>
         </Layout>
       </Layout>
     </Layout>
   );
-}
+};
+
+export default App;

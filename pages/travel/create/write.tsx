@@ -138,7 +138,10 @@ export default function Write() {
 
       if (response.data.id) {
         alert("여행지가 성공적으로 생성되었습니다.");
-        router.push(`/destinations/${response.data.id}`);
+        void router.push(`/destinations/${response.data.id}`).then(() => {
+          // 첫 번째 이동이 완료된 후에 두 번째 이동 실행
+          void router.push("/");
+        });
       } else {
         alert("여행지 생성에 실패하였습니다.");
       }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { ChangeEvent } from "react";
 import axios from "axios";
 import styled from "@emotion/styled";
+import { useRouter } from "next/router";
 
 // ... 나머지 import 구문 ...
 
@@ -137,10 +138,10 @@ function setCookie(name, value, days) {
   document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
 }
 
-
 export default function LoginPage(): JSX.Element {
   const [userid, setUserid] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const router = useRouter();
 
   const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setUserid(e.target.value);
@@ -153,7 +154,8 @@ export default function LoginPage(): JSX.Element {
   const handleSubmit = async (): Promise<void> => {
     try {
       // 서버에 로그인 요청
-      const response = await axios.post("http://localhost:8080/api/users/login",
+      const response = await axios.post(
+        "http://localhost:8080/api/users/login",
         {
           userid: userid,
           password: password,
@@ -163,11 +165,11 @@ export default function LoginPage(): JSX.Element {
       if (response.status === 200) {
         console.log("로그인 성공.");
 
-        localStorage.setItem('authToken', response.data.token);
-
+        localStorage.setItem("authToken", response.data.token);
+        window.location.reload(); // 로그인 성공 후 페이지를 강제로 리로드
 
         // window.location.href = "http://localhost:3000"; // 로그인 성공 시 리다이렉트
-
+        window.location.href = "/"; // 메인 페이지로 이동
       } else {
         throw new Error("로그인 실패.");
       }
@@ -179,23 +181,26 @@ export default function LoginPage(): JSX.Element {
   const handleLogout = async (): Promise<void> => {
     try {
       // 세션 ID를 삭제
-      setCookie('sessionId', '', -1); // 쿠키를 삭제하기 위해 음수 값 설정
+      setCookie("sessionId", "", -1); // 쿠키를 삭제하기 위해 음수 값 설정
 
-      const authToken = localStorage.getItem('authToken'); // 로컬 스토리지에서 토큰 가져오기
+      const authToken = localStorage.getItem("authToken"); // 로컬 스토리지에서 토큰 가져오기
 
-      const response = await axios.post("http://localhost:8080/api/users/logout", null, {
-        headers: {
-          Authorization: `Bearer ${authToken}` // JWT 토큰을 헤더에 추가
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/users/logout",
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // JWT 토큰을 헤더에 추가
+          },
+        }
+      );
 
       // 로컬 스토리지에서 토큰 제거
-      localStorage.removeItem('authToken');
+      localStorage.removeItem("authToken");
 
       if (response.status === 200) {
         console.log("로그아웃 성공.");
         window.location.href = "http://localhost:3000"; // 로그아웃 성공 시 리다이렉트
-
       } else {
         throw new Error("로그아웃 실패.");
       }
@@ -232,7 +237,6 @@ export default function LoginPage(): JSX.Element {
           <br />
 
           <NoAccessLink> Can't access your account?</NoAccessLink>
-
 
           {/* // 로그아웃 버튼 예제 */}
           <button onClick={handleLogout}>Logout</button>

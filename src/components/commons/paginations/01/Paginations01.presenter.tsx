@@ -7,7 +7,7 @@ export default function Paginations01UI(
   return (
     <div>
       <Page onClick={props.onClickPrevPage}>{`<`}</Page>
-      {new Array(10).fill(1).map(
+      {new Array(5).fill(1).map(
         (_, index) =>
           props.startPage + index <= props.lastPage && (
             <Page

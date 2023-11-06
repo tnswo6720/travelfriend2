@@ -56,13 +56,13 @@ const LoginForm = styled.div`
   width: 350px;
   height: 600px;
 
-  h4 {
+  h3 {
     text-align: left;
     margin-left: 40px;
     color: #fff;
 
     @media only screen and (min-width : 500px) and (max-width : 600px){
-      h4 {
+      h3 {
         text-align:center;
         margin:0;
       }
@@ -108,71 +108,10 @@ const Error = styled.div`
   color: #9e00ff;
 `;
 
-// 라디오 버튼 스타일
-
-const RadioButtonLabel = styled.label`
-  position: relative;
-  padding-left: 35px;
-  margin-right: 15px;
-  color: white;
-  cursor: pointer;
-  
-  & input {
-    position: absolute;
-    visibility: hidden;
-
-    &:checked ~ span {
-      background-color: #4A90E2;
-
-      &::after {
-        visibility: visible;
-      }
-    }
-  }
-
-  & span {
-    position: absolute;
-    top: -2px; // Adjust these values for your needs
-    left: -2px; // Adjust these values for your needs
-    height: 24px; // Adjust these values for your needs
-    width: 24px; // Adjust these values for your needs
-    border-radius :50%;
-    
-   
-   
-   border :1px solid #000;
-
-   &::after{
-     content:"";
-     position:absolute ;
-     visibility:hidden ;
-     top :5px ; 
-     left :5px ;
-     width :12px ; 
-     height :12px ; 
-     
-     
-     border-radius :50% ;
-     
-     
-     
-   background-color: ivory ;
-
-
-
-}
-`;
-
-const RadioWrapper = styled.div`
-  margin-top: 10px;
-`;
-
 export default function LoginPage(): JSX.Element {
   const [ID, setID] = useState("");
   const [IDError, setIDError] = useState("");
 
-  const [gender, setGender] = useState("");
-  const [gendererror, setGenderError] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -181,12 +120,6 @@ export default function LoginPage(): JSX.Element {
 
   const [address, setAddress] = useState(""); // 주소를 관리할 상태 변수
   const [isOpen, setIsOpen] = useState(false); // 모달의 열림/닫힘을 관리할 상태 변수
-
-  const validateEmail = (email: string): boolean => {
-    const re =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  };
 
   const handleComplete = (data: Address): void => {
     setAddress(data.address);
@@ -222,17 +155,8 @@ export default function LoginPage(): JSX.Element {
 
   const onChangeEmail = (event: ChangeEvent<HTMLInputElement>): void => {
     setEmail(event.target.value);
-
-    if (!validateEmail(event.target.value)) {
-      setEmailError("유효하지 않은 이메일 주소입니다.");
-    } else {
-      setEmailError("");
-    }
-  };
-  const onChangeGender = (event: ChangeEvent<HTMLInputElement>): void => {
-    setGender(event.target.value);
     if (event.target.value !== "") {
-      setGenderError("");
+      setEmailError("");
     }
   };
 
@@ -243,14 +167,8 @@ export default function LoginPage(): JSX.Element {
     if (password === "") {
       setPasswordError("비밀번호를 입력해주세요.");
     }
-
-    if (gender === "") {
-      setGenderError("성별을 선택해주세요.");
-    }
-
-    if (Email === "" || !validateEmail(Email)) {
-      setEmailError("유효하지 않은 이메일 주소입니다.");
-      return; // 추가: 이메일이 유효하지 않으면 함수를 종료합니다.
+    if (Email === "") {
+      setEmailError("이메일을 입력해주세요.");
     }
 
     // 모든 필드가 채워졌다면, 상태 값을 콘솔에 출력합니다.
@@ -259,33 +177,16 @@ export default function LoginPage(): JSX.Element {
         ID,
         password,
         Email,
-        address,
-        gender,
       });
-
-      //     try {
-      //       await axios.post("http://localhost:8080/api/users/signup", {
-      //         password: password,
-      //         email: Email,
-      //         profileImageUrl: null,
-      //         nickname: ID, // 닉네임이 없으므로 ID를 사용했습니다. 필요에 따라 수정하세요.
-      //         dateOfBirth: new Date().toISOString(), // 날짜는 고정값입니다. 필요에 따라 수정하세요.
-      //         gender: gender,
-      //         introduction: address,
-      //       });
-      //     } catch (error) {
-      //       console.error("회원가입 실패", error);
-      //     }
-      //   }
-      // };
 
       try {
         await axios.post("http://localhost:8080/api/users/signup", {
           userid: ID,
-          password,
+          password: password,
           email: Email,
-          gender,
-          address,
+          dateOfBirth: "2023-10-14", // 날짜는 고정값입니다. 필요에 따라 수정하세요.
+          gender: null,
+          address: address
         });
       } catch (error) {
         console.error("회원가입 실패", error);
@@ -300,10 +201,10 @@ export default function LoginPage(): JSX.Element {
           <h1>Sign Up</h1>
         </LoginHeader>
         <LoginForm>
-          <h4>ID:</h4>
+          <h3>ID:</h3>
           <Input type="text" placeholder="Username" onChange={onChangeID} />
           <Error>{IDError}</Error>
-          <h4>Password:</h4>
+          <h3>Password:</h3>
           <Input
             type="password"
             placeholder="Password"
@@ -311,36 +212,11 @@ export default function LoginPage(): JSX.Element {
           />
           <Error>{passwordError}</Error>
           <br />
-          <h4>Email:</h4>
+          <h3>Email:</h3>
           <Input type="text" placeholder="Email" onChange={onChangeEmail} />
           <Error>{EmailError}</Error>
-
-          <h4>gender:</h4>
-
-          <RadioWrapper>
-            <RadioButtonLabel>
-              <Input
-                type="radio"
-                name="gender"
-                value="male"
-                onChange={onChangeGender}
-              />
-              <span></span> 남성
-            </RadioButtonLabel>
-
-            <RadioButtonLabel>
-              <Input
-                type="radio"
-                name="gender"
-                value="female"
-                onChange={onChangeGender}
-              />
-              <span></span> 여성
-            </RadioButtonLabel>
-          </RadioWrapper>
-          <Error>{gendererror}</Error>
           <br />
-          <h4>Address:</h4>
+          <h3>Address:</h3>
           <Input
             type="text"
             placeholder="Address"

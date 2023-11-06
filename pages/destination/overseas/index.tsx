@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import styled from "@emotion/styled";
 import axios from "axios";
-import Recommend from "../../travel/recommend/recommend";
+import Recommend from "../../travel/recommend/recommend2";
 
 interface Place {
   id: number;
