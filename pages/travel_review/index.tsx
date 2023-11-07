@@ -4,6 +4,7 @@ import type { ChangeEvent } from "react";
 import styled from "@emotion/styled";
 import Recommend from "../travel/recommend/recommend2";
 
+
 interface Place {
   name: string;
   season: string[];
