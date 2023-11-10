@@ -13,7 +13,7 @@ export default function BoardList(): JSX.Element {
     axios
       .get("http://localhost:8080/api/posts")
       .then((response) => {
-        setData({ fetchBoards: response.data });
+        setData(response.data);
       })
       .catch((error) => {
         console.error("There was an error fetching the boards data:", error);

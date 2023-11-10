@@ -4,7 +4,7 @@ import * as S from "./BoardList.styles";
 import type { IBoardListUIProps } from "./BoardList.types";
 
 export default function BoardListUI(props: IBoardListUIProps): JSX.Element {
-  const currentPosts = props.data?.fetchBoards.slice(
+  const currentPosts = props.data?.slice(
     (props.currentPage - 1) * props.postsPerPage,
     props.currentPage * props.postsPerPage
   );
@@ -13,7 +13,7 @@ export default function BoardListUI(props: IBoardListUIProps): JSX.Element {
     <S.Wrapper>
       <S.TableTop />
       <S.Row>
-        <S.ColumnHeaderBasic>ID</S.ColumnHeaderBasic>
+        <S.ColumnHeaderBasic>Index</S.ColumnHeaderBasic>
         <S.ColumnHeaderTitle>제목</S.ColumnHeaderTitle>
         <S.ColumnHeaderBasic>작성자</S.ColumnHeaderBasic>
         <S.ColumnHeaderBasic>날짜</S.ColumnHeaderBasic>
@@ -32,7 +32,7 @@ export default function BoardListUI(props: IBoardListUIProps): JSX.Element {
       <S.Footer>
         <Paginations01
           setCurrentPage={props.setCurrentPage}
-          count={props.data?.fetchBoards.length}
+          count={props.data?.length}
         />
         <S.Button onClick={props.onClickMoveToBoardNew}>
           <S.PencilIcon src="/images/board/list/write.png" />

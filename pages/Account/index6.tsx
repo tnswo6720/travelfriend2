@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import axios from "axios";
-import DaumPostcodeEmbed from "react-daum-postcode";
-import { Modal } from "antd";
 
 const Page = styled.div`
   background-color: #7b3fb63d;
@@ -43,26 +41,6 @@ const Input = styled.input`
 
 export default function App(): JSX.Element {
   const [userInfo, setUserInfo] = useState({});
-  const [address, setAddress] = useState(""); // 주소를 관리할 상태 변수
-  const [isOpen, setIsOpen] = useState(false); // 모달의 열림/닫힘을 관리할 상태 변수
-
-  const handleComplete = (data: Address): void => {
-    setAddress(data.address);
-    console.log(data.address);
-    setIsOpen(false);
-  };
-
-  const showModal = (): void => {
-    setIsOpen(true);
-  };
-
-  const handleOk = (): void => {
-    setIsOpen(false);
-  };
-
-  const handleCancel = (): void => {
-    setIsOpen(false);
-  };
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -77,7 +55,6 @@ export default function App(): JSX.Element {
         );
 
         const fetchedUserInfo = response.data;
-        setAddress(fetchedUserInfo.address); // 주소 설정
 
         if (!fetchedUserInfo.dateOfBirth) {
           fetchedUserInfo.dateOfBirth = new Date().toISOString().split("T")[0]; // 현재 날짜로 설정
@@ -106,13 +83,11 @@ export default function App(): JSX.Element {
     });
     console.log(userInfo);
   };
-
   const updateUserInfo = async () => {
     try {
       const data = {
         ...userInfo,
         email: userInfo.userEmail,
-        address, // 주소 추가
       };
       delete data.userEmail;
 
@@ -175,32 +150,6 @@ export default function App(): JSX.Element {
             type="text"
             value={userInfo ? userInfo.usergender : ""}
             onChange={(e) => handleInputChange("usergender", e.target.value)}
-          />
-        </Section>
-
-        <Section>
-          <h2>Address</h2>
-          <Input
-            type="text"
-            value={address}
-            onClick={showModal} // 클릭하면 모달이 열립니다.
-            readOnly // 주소는 직접 수정하지 못하게 읽기 전용으로 설정합니다.
-          />
-
-          {/* 모달 */}
-          {isOpen && (
-            <Modal open={isOpen} onOk={handleOk} onCancel={handleCancel}>
-              <DaumPostcodeEmbed onComplete={handleComplete} />
-            </Modal>
-          )}
-        </Section>
-
-        <Section>
-          <h2>Birth Date</h2>
-          <Input
-            type="date"
-            value={userInfo ? userInfo.dateOfBirth : ""}
-            onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
           />
         </Section>
 

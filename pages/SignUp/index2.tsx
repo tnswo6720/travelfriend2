@@ -179,9 +179,6 @@ export default function LoginPage(): JSX.Element {
   const [Email, setEmail] = useState("");
   const [EmailError, setEmailError] = useState("");
 
-  // 생년월일 상태 관리 변수
-  const [dateOfBirth, setDateOfBirth] = useState(null);
-
   const [address, setAddress] = useState(""); // 주소를 관리할 상태 변수
   const [isOpen, setIsOpen] = useState(false); // 모달의 열림/닫힘을 관리할 상태 변수
 
@@ -214,11 +211,6 @@ export default function LoginPage(): JSX.Element {
     if (event.target.value !== "") {
       setIDError("");
     }
-  };
-
-  // 생년월일 변경 핸들러
-  const onChangeDateOfBirth = (event: ChangeEvent<HTMLInputElement>): void => {
-    setDateOfBirth(event.target.value);
   };
 
   const onChangePassword = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -269,7 +261,6 @@ export default function LoginPage(): JSX.Element {
         Email,
         address,
         gender,
-        dateOfBirth,
       });
 
       try {
@@ -279,7 +270,6 @@ export default function LoginPage(): JSX.Element {
           email: Email,
           gender,
           address,
-          dateOfBirth, // 생년월일 추가
         });
       } catch (error) {
         console.error("회원가입 실패", error);
@@ -342,10 +332,6 @@ export default function LoginPage(): JSX.Element {
             onClick={showModal} // 클릭하면 모달이 열립니다.
             readOnly // 주소는 직접 수정하지 못하게 읽기 전용으로 설정합니다.
           />
-
-          {/* 생년월일 입력 */}
-          <h4>Birth Date:</h4>
-          <Input type="date" onChange={onChangeDateOfBirth} />
 
           {/* 모달 */}
           {isOpen && (

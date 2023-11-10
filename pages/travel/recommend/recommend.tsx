@@ -105,7 +105,7 @@ function Recommend() {
   const currentDestinations = destinations.slice(startIndex, endIndex);
 
   return (
-    <div>
+    <div className={styles.container}>
       <SearchContainer>
         <SearchInput
           type="text"

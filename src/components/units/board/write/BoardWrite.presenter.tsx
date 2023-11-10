@@ -15,33 +15,58 @@ export default function BoardWriteUI({
   handleChange,
   handleSubmit,
   handleEditorChange,
+  loggedInUser,
 }: IBoardWriteUIProps): JSX.Element {
   return (
     <S.Wrapper>
       <S.Title>게시글 등록</S.Title>
       <form onSubmit={handleSubmit}>
-        <S.Label>작성자</S.Label>
-        <S.InputWrapper>
-          <S.Writer
-            type="text"
-            name="author"
-            placeholder="이름을 적어주세요."
-            value={formData.author}
-            onChange={handleChange}
-          />
-          <S.Error>{errors.authorError}</S.Error>
-        </S.InputWrapper>
-        <S.Label>비밀 번호</S.Label>
-        <S.InputWrapper>
-          <S.Password
-            type="password"
-            name="password"
-            placeholder="비밀번호를 작성해주세요."
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <S.Error>{errors.passwordError}</S.Error>
-        </S.InputWrapper>
+        {loggedInUser ? (
+          <input type="hidden" name="author" value={loggedInUser.id} />
+        ) : (
+          <div>
+            <S.Label>작성자</S.Label>
+            <S.InputWrapper>
+              <S.Writer
+                type="text"
+                name="author"
+                placeholder="이름을 적어주세요."
+                value={formData.author}
+                onChange={handleChange}
+              />
+              <S.Error>{errors.authorError}</S.Error>
+            </S.InputWrapper>
+          </div>
+        )}
+        {loggedInUser ? (
+          <div style={{ display: "none" }}>
+            <S.Label>비밀 번호</S.Label>
+            <S.InputWrapper>
+              <S.Password
+                type="password"
+                name="password"
+                placeholder="비밀번호를 작성해주세요."
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <S.Error>{errors.passwordError}</S.Error>
+            </S.InputWrapper>
+          </div>
+        ) : (
+          <div>
+            <S.Label>비밀 번호</S.Label>
+            <S.InputWrapper>
+              <S.Password
+                type="password"
+                name="password"
+                placeholder="비밀번호를 작성해주세요."
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <S.Error>{errors.passwordError}</S.Error>
+            </S.InputWrapper>
+          </div>
+        )}
         <S.Label>제목</S.Label>
         <S.InputWrapper>
           <S.Subject

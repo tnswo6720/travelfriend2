@@ -38,9 +38,39 @@ export default function BoardDetailUI(props: IBoardDetailUIProps): JSX.Element {
         </S.Body>
       </S.CardWrapper>
       <S.BottomWrapper>
+        {!props.loggedInUser && (
+          <div>
+            <label>
+              비밀번호:
+              <input type="password" onChange={props.handlePasswordChange} />
+            </label>
+          </div>
+        )}
         <S.Button onClick={props.onClickMoveToBoardList}>목록으로</S.Button>
-        <S.Button onClick={props.onClickMoveToBoardEdit}>수정하기</S.Button>
-        <S.Button onClick={props.onClickDelete}>삭제하기</S.Button>
+        <S.Button
+          onClick={props.onClickMoveToBoardEdit}
+          style={{
+            display:
+              parseInt(props.data?.author) === props.loggedInUser?.id ||
+              props.passwordEntered === props.data?.password
+                ? "block"
+                : "none",
+          }}
+        >
+          수정하기
+        </S.Button>
+        <S.Button
+          onClick={props.onClickDelete}
+          style={{
+            display:
+              parseInt(props.data?.author) === props.loggedInUser?.id ||
+              props.passwordEntered === props.data?.password
+                ? "block"
+                : "none",
+          }}
+        >
+          삭제하기
+        </S.Button>
       </S.BottomWrapper>
     </S.Wrapper>
   );

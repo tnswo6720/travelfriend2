@@ -7,7 +7,7 @@ export default function Paginations01(props: IPaginations01Props): JSX.Element {
   const [startPage, setStartPage] = useState(1);
   const [activedPage, setActivedPage] = useState(1);
   // const lastPage = Math.ceil((props.count ?? 10) / 10);
-  const postsPerPage = 15;
+  const postsPerPage = 10;
   const lastPage = Math.ceil((props.count ?? postsPerPage) / postsPerPage);
 
   const onClickPage = (event: MouseEvent<HTMLSpanElement>): void => {

@@ -11,6 +11,35 @@ export default function BoardDetail() {
   // useState의 제네릭을 사용하여 data의 타입을 명시적으로 지정합니다.
   const [data, setData] = useState(null);
 
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
+  const [passwordEntered, setPasswordEntered] = useState("");
+
+  const handlePasswordChange = (e) => {
+    setPasswordEntered(e.target.value);
+  };
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/users/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        const fetchedUserInfo = response.data;
+        setLoggedInUser(fetchedUserInfo);
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
   // useEffect를 사용하여 컴포넌트가 마운트될 때 API 호출을 수행합니다.
   useEffect(() => {
     // boardId가 문자열인지 확인합니다. 문자열이 아니면 API 호출을 스킵합니다.
@@ -61,10 +90,14 @@ export default function BoardDetail() {
   // UI 컴포넌트를 렌더링하고, data와 이벤트 핸들러를 props로 전달합니다.
   return (
     <BoardDetailUI
-      data={data ?? undefined} // null이면 undefined 할당
+      data={data ?? undefined}
       onClickMoveToBoardEdit={onClickMoveToBoardEdit}
-      onClickDelete={onClickDelete} // 삭제 함수를 props로 전달
-      onClickMoveToBoardList={onClickMoveToBoardList} // 목록으로 이동하는 함수를 props로 전달
+      onClickDelete={onClickDelete}
+      onClickMoveToBoardList={onClickMoveToBoardList}
+      loggedInUser={loggedInUser} // 추가된 부분
+      passwordEntered={passwordEntered}
+      handlePasswordChange={handlePasswordChange}
+      author={loggedInUser} // 추가된 부분
     />
   );
 }

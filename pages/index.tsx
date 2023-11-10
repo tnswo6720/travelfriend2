@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   LaptopOutlined,
   NotificationOutlined,
@@ -8,6 +8,7 @@ import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import LayoutBanner from "../src/components/commons/layout/banner/LayoutBanner.container";
 import MyCarousel from "./MyCarousel/MyCarousel";
+import axios from "axios";
 
 const { Content, Sider } = Layout;
 
@@ -83,6 +84,23 @@ const items2 = icons.map((Icon, index) => {
 });
 
 export default function App() {
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const response = await axios.get("/api/destinations");
+      const sortedDestinations = response.data.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      ); // updatedAt 기준으로 내림차순 정렬
+      const imageUrls = sortedDestinations
+        .map((destination) => destination.imageUrl)
+        .slice(0, 3); // 상위 3개만 선택
+      setImages(imageUrls);
+    };
+
+    fetchImages();
+  }, []);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -120,7 +138,7 @@ export default function App() {
               // borderTop: "1px dashed white", // 위쪽 구분선 설정
             }}
           >
-            최근 올라온 사이트 여행 콘텐츠
+            최근 업로드된 이용자분이 다녀오신 관광지
           </Breadcrumb>
           <Content
             style={{

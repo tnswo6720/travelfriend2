@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 export const DestinationContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around; // 아이템들 사이에 공간 동일하게 배분
+  justify-content: space-between; // 아이템들 사이에 공간 동일하게 배분
   width: 150%; // 컨테이너를 화면 넓이에 맞게 조정
   z-index: 1;
 `;

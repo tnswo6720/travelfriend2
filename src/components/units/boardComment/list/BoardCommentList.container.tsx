@@ -15,10 +15,17 @@ export default function BoardCommentList(): JSX.Element {
     if (typeof router.query.boardId !== "string") return;
     const fetchComments = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/posts/${router.query.boardId}/comments`
+        const commentIds: any[] = [
+          /* 게시글에 달린 모든 댓글의 id를 여기에 입력하세요 */
+        ];
+        const commentPromises = commentIds.map(
+          async (id) =>
+            await axios.get(`http://localhost:8080/api/comments/read/${id}`)
         );
-        setComments(response.data);
+        const responses = await Promise.all(commentPromises);
+        const comments = responses.map((response) => response.data);
+        console.log(comments); // 이 부분 추가
+        setComments(comments);
       } catch (error) {
         if (error instanceof Error) alert(error.message);
       }

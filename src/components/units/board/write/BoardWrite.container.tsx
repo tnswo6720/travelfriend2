@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from 'axios';
+import axios from "axios";
 import BoardWriteUI from "./BoardWrite.presenter";
 // import ReactQuill from 'react-quill';
-import MyQuillEditor from '../../../CustomEditor/MyQuillEditor';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css'; // Quill의 스타일 시트를 추가해줍니다.
+import MyQuillEditor from "../../../CustomEditor/MyQuillEditor";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css"; // Quill의 스타일 시트를 추가해줍니다.
 
 const MyQuillEditorDynamic = dynamic(
-  () => import('../../../CustomEditor/MyQuillEditor'),
+  () => import("../../../CustomEditor/MyQuillEditor"),
   { ssr: false }
 );
 
@@ -30,11 +30,52 @@ export default function BoardWrite() {
     contentsError: "",
   });
 
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
+  useEffect(() => {
+    if (loggedInUser) {
+      setFormData((prev) => ({
+        ...prev,
+        author: loggedInUser.id,
+        password: "1",
+      }));
+    }
+  }, [loggedInUser]);
+
+  useEffect(() => {
+    if (loggedInUser) {
+      setFormData((prev) => ({ ...prev, author: loggedInUser.id }));
+    }
+  }, [loggedInUser]);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/users/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+
+        const fetchedUserInfo = response.data;
+
+        setLoggedInUser(fetchedUserInfo); // 로그인한 사용자 정보 설정
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      }
+    };
+
+    void fetchUserInfo();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
 
-    if (type === 'file') {
-      const newFiles = files ? Array.from(files) as File[] : []; // 파일 배열 복사
+    if (type === "file") {
+      const newFiles = files ? (Array.from(files) as File[]) : []; // 파일 배열 복사
 
       setFormData({
         ...formData,
@@ -85,10 +126,7 @@ export default function BoardWrite() {
       ...prevData,
       contents: value,
     }));
-
-
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -108,16 +146,21 @@ export default function BoardWrite() {
     formDataForRequest.append("post", JSON.stringify(restOfData));
 
     // 각 파일을 "files" 키로 추가
-    files && files.forEach((file, index) => {
-      formDataForRequest.append(`files`, file); // 인덱스를 키에 포함
-    });
+    files &&
+      files.forEach((file, index) => {
+        formDataForRequest.append(`files`, file); // 인덱스를 키에 포함
+      });
 
     try {
-      const response = await axios.post('http://localhost:8080/api/posts/create', formDataForRequest, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // 파일 업로드 시 Content-Type 설정
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/posts/create",
+        formDataForRequest,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // 파일 업로드 시 Content-Type 설정
+          },
+        }
+      );
 
       if (response.data.id) {
         alert("게시글이 성공적으로 등록되었습니다.");
@@ -126,7 +169,7 @@ export default function BoardWrite() {
     } catch (error) {
       alert("오류가 발생했습니다. 다시 시도해주세요.");
     }
-  }
+  };
   return (
     <div>
       <BoardWriteUI
@@ -136,6 +179,7 @@ export default function BoardWrite() {
         handleSubmit={handleSubmit}
         handleEditorChange={handleQuillChange}
         MyQuillEditor={MyQuillEditorDynamic} // MyQuillEditor를 props로 전달
+        loggedInUser={loggedInUser}
       />
     </div>
   );
