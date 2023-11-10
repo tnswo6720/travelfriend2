@@ -54,7 +54,7 @@ const LoginForm = styled.div`
   margin:5% auto;
   text-align:center;
   width: 350px;
-  height: 600px;
+  height: 650px;
 
   h4 {
     text-align: left;
